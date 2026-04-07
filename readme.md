@@ -7,6 +7,9 @@ O **PoreScanner** evoluiu de um simples script para uma suíte modular de reconh
 ## 🚀 O que há de novo na v2.5?
 
 Diferente de scanners convencionais, o PoreScanner foca no **pós-scan**: a comunicação entre o analista de segurança e o time de desenvolvimento/infraestrutura.
+## 📊 Visualização do Relatório Técnico
+Abaixo, um exemplo de como o `reporter.py` processa os dados e entrega uma interface limpa para o time de remediação:
+![Preview do Relatório](./report_preview.png)
 
 ### ✨ Diferenciais e Funcionalidades:
 * **Arquitetura Modular:** Separação lógica entre o motor de varredura (`scanner.py`) e o processador de relatórios (`reporter.py`), seguindo boas práticas de engenharia de software.
