@@ -1,17 +1,13 @@
 import socket
-from datetime import datetime
-import sys
 import os
+from datetime import datetime
+# Importa a função do arquivo reporter.py
+from reporter import generate_dev_report 
 
 # Cores para o terminal
-GREEN = '\033[92m'
-RED = '\033[91m'
-BLUE = '\033[94m'
-YELLOW = '\033[93m'
-RESET = '\033[0m'
+BLUE, GREEN, YELLOW, RED, RESET = '\033[94m', '\033[92m', '\033[93m', '\033[91m', '\033[0m'
 
 def clear_screen():
-    # Limpa o terminal dependendo do Sistema Operacional
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_banner():
@@ -23,62 +19,54 @@ def print_banner():
   |  __/ (_) | |  \__ \  __/ ___) | (_| (_| | | | | | | |  __/ |   
   |_|   \___/|_|  |___/\___|____/ \___\__,_|_| |_|_| |_|\___|_|   
                                                                    
-  -> Uma ferramenta simples para reconhecimento rápido de rede <-
+  -> Scanner de Rede & Gerador de Relatórios Técnicos v2.5 <-
 {RESET}
     """
     print(banner)
 
 def run_scan():
+    log_file = "scan_report.txt"
+    
     while True:
         clear_screen()
         print_banner()
         
-        target = input(f"{YELLOW}[?] Digite o IP ou Host para escanear:{RESET} ")
-        if not target:
-            target = "127.0.0.1"
+        target = input(f"{YELLOW}[?] Digite o IP ou Host para escanear:{RESET} ") or "127.0.0.1"
+        ports = [21, 22, 23, 80, 443, 3306, 8080]
         
-        ports = [21, 22, 23, 25, 53, 80, 110, 443, 3306, 8080]
-        log_file = "scan_report.txt"
-
-        print(f"\n{BLUE}[!] Iniciando scan em:{RESET} {target}")
-        print("-" * 50)
-
-        open_ports = 0
-
+        print(f"\n{BLUE}[!] Iniciando varredura em {target}...{RESET}")
+        
         try:
             with open(log_file, "a") as file:
-                file.write(f"\n--- Relatório de Scan: {datetime.now()} ---\n")
+                # Marcação de início de sessão para a Timeline
+                timestamp_inicio = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                file.write(f"\n--- SESSAO_INICIO: {timestamp_inicio} ---\n")
                 file.write(f"Alvo: {target}\n")
-
+                
                 for port in ports:
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    s.settimeout(0.5) 
+                    s.settimeout(0.5)
                     result = s.connect_ex((target, port))
                     
                     if result == 0:
-                        status = f"{GREEN}[+] Porta {port}: ABERTA{RESET}"
-                        print(status)
-                        file.write(f"- Porta {port} ABERTA\n")
-                        open_ports += 1
+                        print(f"{GREEN}[+] Porta {port}: ABERTA{RESET}")
+                        hora_detecao = datetime.now().strftime('%H:%M:%S')
+                        file.write(f"[{hora_detecao}] Porta {port} ABERTA\n")
                     s.close()
                 
-                if open_ports == 0:
-                    print(f"{RED}[-] Nenhuma porta aberta comum encontrada.{RESET}")
-                    file.write("- Nenhuma porta encontrada.\n")
-
-        except KeyboardInterrupt:
-            print(f"\n{RED}[!] Interrompido.{RESET}")
-            break
+                file.write(f"--- SESSAO_FIM ---\n")
         except Exception as e:
-            print(f"{RED}[!] Erro: {e}{RESET}")
+            print(f"{RED}[!] Erro durante o scan: {e}{RESET}")
 
-        print("-" * 50)
-        print(f"{GREEN}[V] Scan finalizado e salvo em {log_file}{RESET}")
-        
-        # --- NOVA FUNÇÃO: CONTINUAR OU SAIR ---
-        choice = input(f"\n{YELLOW}[?] Deseja escanear outro IP? (y/n):{RESET} ").lower()
-        if choice != 'y':
-            print(f"{BLUE}\n[!] Encerrando ferramenta... Até logo!{RESET}")
+        if input(f"\n{YELLOW}[?] Deseja escanear outro alvo? (y/n):{RESET} ").lower() != 'y':
+            print(f"\n{BLUE}[*] Finalizando sessão...{RESET}")
+            ans = input(f"{YELLOW}[?] Deseja gerar o relatório técnico de Timeline? (y/n):{RESET} ").lower()
+            
+            if ans == 'y':
+                if generate_dev_report(log_file):
+                    print(f"{GREEN}[V] Relatório 'RELATORIO_TECNICO_DETALHADO.md' atualizado com sucesso!{RESET}")
+            
+            print(f"{BLUE}\n[!] Encerrando. Até logo, Eduardo!{RESET}")
             break
 
 if __name__ == "__main__":
