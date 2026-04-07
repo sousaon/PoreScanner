@@ -1,0 +1,17 @@
+
+--- Relatório de Scan: 2026-04-06 22:10:19.120122 ---
+Alvo: 10.10.10.10
+Portas Abertas Encontradas:
+- Nenhuma porta encontrada.
+
+--- Relatório de Scan: 2026-04-06 22:11:53.304535 ---
+Alvo: 8.8.8.8
+- Porta 53 ABERTA
+- Porta 443 ABERTA
+
+--- Relatório de Scan: 2026-04-06 22:12:06.253236 ---
+Alvo: 10.10.10.10
+- Nenhuma porta encontrada.
+
+--- Relatório de Scan: 2026-04-06 22:19:38.164489 ---
+Alvo: n
